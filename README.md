@@ -39,6 +39,34 @@ SCM:
 *В качестве ответа пришлите скриншоты с настройками проекта и результатами выполнения сборки*
 
 ### Ответ
+Declarative pipeline:
+```Groovy
+pipeline {
+    agent any
+    stages {
+        stage('Git clone') {
+            steps {
+                git 'https://github.com/netology-code/sdvps-materials.git'
+            }
+        }
+        stage('Run tests') {
+            steps {
+                sh '/usr/local/go/bin/go test .'
+            }
+        }
+        stage('Build go app in docker image') {
+            steps {
+                sh 'docker build . -t cicd-host:8082/hello-world:decl_v$BUILD_NUMBER'
+            }
+        }
+    }
+}
+```
+#### *Результат сборки:*
+Статус пайплайна:
+![Статус пайплайна](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/2-screen-1.png)
+Собранный image в Docker:
+![image-2](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/2-screen-2.png)
 
 ---
 

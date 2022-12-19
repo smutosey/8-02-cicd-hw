@@ -74,7 +74,7 @@
 
 - name: Set hosts 
   shell: |
-    echo -e "192.168.56.11\tcicd-host\tcicd-host" >> /etc/hosts 
+    echo "192.168.56.11\tcicd-host\tcicd-host" >> /etc/hosts 
 
 - name: Add our User to Docker group
   ansible.builtin.user:

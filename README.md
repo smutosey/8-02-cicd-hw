@@ -79,6 +79,38 @@ pipeline {
 *В качестве ответа пришлите скриншоты с настройками проекта и результатами выполнения сборки*
 
 ### Ответ
+Репозиторий:
+![image-1](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/3-screen-1.png)
+Пайплайн:
+```Groovy
+pipeline {
+    agent any
+    stages {
+        stage('Git clone') {
+            steps {
+                git 'https://github.com/netology-code/sdvps-materials.git'
+            }
+        }
+        stage('Run tests') {
+            steps {
+                sh '/usr/local/go/bin/go test .'
+            }
+        }
+        stage('Build go app and push to Nexus repo') {
+            steps {
+                sh 'CGO_ENABLED=0 GOOS=linux /usr/local/go/bin/go build -a -installsuffix nocgo -o ./go-app .'
+                sh 'curl -u admin:admin http://cicd-host:8081/repository/raw-hosted-repo/ --upload-file ./go-app -v'
+            }
+        }
+    }
+}
+```
+#### *Результат сборки*
+Прогон пайплайна:
+![image-2](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/3-screen-2.png)
+Приложение в репозитории:
+![image-3](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/3-screen-3.png)
+
 
 ---
 
@@ -88,3 +120,17 @@ pipeline {
 *В качестве ответа пришлите скриншоты с настройками проекта и результатами выполнения сборки*
 
 ### Ответ
+Достаточно внести изменения в стадию Build:
+```Groovy
+stage('Build go app and push to Nexus repo') {
+    steps {
+        sh 'CGO_ENABLED=0 GOOS=linux /usr/local/go/bin/go build -a -installsuffix nocgo -o ./go-app-v$BUILD_NUMBER .'
+        sh 'curl -u admin:admin http://cicd-host:8081/repository/raw-hosted-repo/ --upload-file ./go-app-v$BUILD_NUMBER -v'
+    }
+}
+```
+#### *Результат сборки*
+Несколько запусков пайплайна:
+![image-1](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/4-screen-1.png)
+Версионирование приложения в репозитории:
+![image-2](https://github.com/smutosey/8-02-cicd-hw/blob/main/img/4-screen-2.png)
